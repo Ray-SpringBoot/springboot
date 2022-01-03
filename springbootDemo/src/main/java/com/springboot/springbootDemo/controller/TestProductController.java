@@ -20,9 +20,10 @@ public class TestProductController {
     @GetMapping("/products/{id}")
     public Product getProduct(@PathVariable("id") String id ){
         Product product = new Product();
-        product.setId("A01");
+        product.setId(id);
         product.setName("Test");
         product.setPrice(0);
+
         return product;
     }
 
