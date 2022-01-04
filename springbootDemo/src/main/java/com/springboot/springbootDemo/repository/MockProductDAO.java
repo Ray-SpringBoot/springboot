@@ -37,6 +37,7 @@ public class MockProductDAO {
     public Product replace(String id, Product product){
         Optional<Product> productOptional = find(id);
         productOptional.ifPresent(product1 -> {
+            product.setId(id);
             product.setName(product.getName());
             product.setPrice(product.getPrice());
         });

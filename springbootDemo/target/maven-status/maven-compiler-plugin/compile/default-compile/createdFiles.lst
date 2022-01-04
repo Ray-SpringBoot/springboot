@@ -1,1 +1,9 @@
+com\springboot\springbootDemo\controller\ProductController.class
+com\springboot\springbootDemo\exception\UnprocessableEntityException.class
+com\springboot\springbootDemo\model\Product.class
+com\springboot\springbootDemo\repository\MockProductDAO.class
+com\springboot\springbootDemo\service\ProductService.class
+com\springboot\springbootDemo\exception\NotFoundException.class
+com\springboot\springbootDemo\model\param\ProductQueryParameter.class
+com\springboot\springbootDemo\controller\TestProductController.class
 com\springboot\springbootDemo\SpringbootDemoApplication.class
