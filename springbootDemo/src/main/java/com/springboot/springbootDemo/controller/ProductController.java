@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/products",produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/product",produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController {
 
     // 暫存資料(以List假設為資料庫)

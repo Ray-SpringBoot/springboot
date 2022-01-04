@@ -1,8 +1,10 @@
 package com.springboot.springbootDemo.model;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@Document("products")
 public class Product {
     private String id;
     private String name;
