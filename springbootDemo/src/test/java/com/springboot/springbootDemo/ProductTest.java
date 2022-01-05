@@ -3,6 +3,8 @@ package com.springboot.springbootDemo;
 import com.springboot.springbootDemo.model.Product;
 import com.springboot.springbootDemo.repository.ProductRepository;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +30,23 @@ public class ProductTest {
     private MockMvc mockMvc;
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     private HttpHeaders httpHeaders;
 
+    @Before
+    public void init() {
+        httpHeaders = new HttpHeaders();
+        httpHeaders.add("Content-Type", "application/json");
+    }
+
+    @After
+    public void clear() {
+        productRepository.deleteAll();
+    }
+
     @Test
     public void testCreateProduct() throws Exception{
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         JSONObject request = new JSONObject()
                 .put("name","Hi")
@@ -66,8 +77,6 @@ public class ProductTest {
     }
     @Test
     public void testGetProduct() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
@@ -83,8 +92,6 @@ public class ProductTest {
 
     @Test
     public void testReplaceProduct() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
 
@@ -113,5 +120,34 @@ public class ProductTest {
 
         productRepository.findById(product.getId())
                 .orElseThrow(RuntimeException::new);
+    }
+
+    @Test
+    public void get400WhenCreateProductWithEmptyName() throws Exception {
+        JSONObject request = new JSONObject()
+                .put("name", "")
+                .put("price", 350);
+
+        mockMvc.perform(post("/products")
+                        .headers(httpHeaders)
+                        .content(request.toString()))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void get400WhenReplaceProductWithNegativePrice() throws Exception {
+        Product product = createProduct("Computer Science", 350);
+        productRepository.insert(product);
+
+        JSONObject request = new JSONObject()
+                .put("name", "Computer Science")
+                .put("price", -100);
+
+        mockMvc.perform(put("/products/" + product.getId())
+                        .headers(httpHeaders)
+                        .content(request.toString()))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
