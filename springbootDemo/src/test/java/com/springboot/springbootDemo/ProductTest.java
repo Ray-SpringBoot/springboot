@@ -3,6 +3,8 @@ package com.springboot.springbootDemo;
 import com.springboot.springbootDemo.model.Product;
 import com.springboot.springbootDemo.repository.ProductRepository;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +32,24 @@ public class ProductTest {
     @Autowired
     ProductRepository productRepository;
 
-    private HttpHeaders httpHeaders;
+    HttpHeaders httpHeaders;
 
+    @Before
+    public void init() {
+        httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    @After
+    public void clear() {
+        productRepository.deleteAll();
+    }
     @Test
     public void testCreateProduct() throws Exception{
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         JSONObject request = new JSONObject()
-                .put("name","Hi")
-                .put("price", 91111);
+                .put("name", "Hi Hi")
+                .put("price", 450);
 
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -66,8 +76,6 @@ public class ProductTest {
     }
     @Test
     public void testGetProduct() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
@@ -83,14 +91,12 @@ public class ProductTest {
 
     @Test
     public void testReplaceProduct() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
 
         JSONObject request = new JSONObject()
                 .put("name", "Macroeconomics")
-                .put("price", 550);
+                .put("price", 5500);
 
         mockMvc.perform(put("/products/" + product.getId())
                         .headers(httpHeaders)
@@ -103,7 +109,7 @@ public class ProductTest {
     }
     @Test(expected = RuntimeException.class)
     public void testDeleteProduct() throws Exception {
-        Product product = createProduct("Economics", 450);
+        Product product = createProduct("Economics123", 450);
         productRepository.insert(product);
 
         mockMvc.perform(delete("/products/" + product.getId())

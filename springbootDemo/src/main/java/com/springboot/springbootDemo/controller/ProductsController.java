@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,11 +32,7 @@ public class ProductsController {
 
     //POST
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody Product request){
-        boolean isIdDuplicated = service.getAll().contains(request.getId());
-        if (isIdDuplicated) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        }
+    public ResponseEntity<Product> create(@Valid @RequestBody Product request){
 
        Product product = service.createProduct(request);
 
@@ -51,16 +48,9 @@ public class ProductsController {
     //PUT
     @PutMapping("/{id}")
     public ResponseEntity<Product> replaceProduct(
-            @PathVariable("id") String id, @RequestBody Product request) {
-        Optional<Product> productOp = Optional.ofNullable(service.getProduct(id));
-
-        if (productOp.isPresent()) {
-            Product product = service.replaceProduct(id, request);
-
-            return ResponseEntity.ok().body(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+            @PathVariable("id") String id,@Valid @RequestBody Product request) {
+        Product product = service.replaceProduct(id, request);
+        return ResponseEntity.ok(product);
     }
 
     //DELETE
